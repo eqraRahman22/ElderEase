@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Family Member Dashboard</title>
+    <style>
+        body { background-color: #e0f5e9; font-family: Arial; }
+        .container { width: 700px; margin: auto; }
+        a { display: inline-block; margin: 10px 0; color: green; font-weight: bold; text-decoration: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px;}
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #a6d8a8; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome Family Member</h1>
+    <a href="{% url 'create_elderly_profile' %}">Create Elderly Profile</a>
+    <a href="{% url 'set_schedule' %}">Set Schedule</a>
+
+    <h2>Your Elderly People</h2>
+    <table>
+        <tr>
+            <th>Name</th><th>Date of Birth</th><th>Gender</th><th>Medical Condition</th><th>Location</th>
+        </tr>
+        {% for elderly in elderly_list %}
+        <tr>
+            <td>{{ elderly.name }}</td>
+            <td>{{ elderly.dob }}</td>
+            <td>{{ elderly.gender }}</td>
+            <td>{{ elderly.med_condition }}</td>
+            <td>{{ elderly.location }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No elderly profiles found.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+</body>
+</html>

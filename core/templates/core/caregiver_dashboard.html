@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caregiver Dashboard</title>
+    <style>
+        body { background-color: #e0f5e9; font-family: Arial; }
+        .container { width: 800px; margin: auto; }
+        a { display: inline-block; margin: 10px 0; color: green; text-decoration: none; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px;}
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #a6d8a8; }
+        button { background-color: green; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px;}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome Caregiver</h1>
+
+    {% if profile %}
+        <p><strong>Your Profile:</strong> {{ profile.name }}, Phone: {{ profile.phone }}</p>
+    {% else %}
+        <a href="{% url 'create_caregiver_profile' %}">Create Your Profile</a>
+    {% endif %}
+
+    <h2>Elderly People List</h2>
+    <table>
+        <tr>
+            <th>Name</th><th>Date of Birth</th><th>Medical Condition</th><th>Location</th><th>Confirm Caregiving</th>
+        </tr>
+        {% for elderly in elderly_list %}
+        <tr>
+            <td>{{ elderly.name }}</td>
+            <td>{{ elderly.dob }}</td>
+            <td>{{ elderly.med_condition }}</td>
+            <td>{{ elderly.location }}</td>
+            <td>
+                <form method="post" action="{% url 'confirm_caregiving' elderly.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Confirm</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No elderly people found.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+</body>
+</html>
