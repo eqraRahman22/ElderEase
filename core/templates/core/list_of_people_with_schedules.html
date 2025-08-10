@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="container">
+    <h2>List of Elderly People with Schedules</h2>
+
+    {% if elderly_list %}
+        <ul>
+            {% for elderly in elderly_list %}
+                <li>
+                    <strong>{{ elderly.name }}</strong> ({{ elderly.gender }}) - {{ elderly.location }}
+                    {% if elderly.careschedule_set.all %}
+                        <ul>
+                            {% for schedule in elderly.careschedule_set.all %}
+                                <li>{{ schedule.date }}: {{ schedule.task_list }} ({{ schedule.start_time }} - {{ schedule.end_time }})</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <em>No schedules assigned</em>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No elderly profiles found.</p>
+    {% endif %}
+</div>
+{% endblock %}

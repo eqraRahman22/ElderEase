@@ -3,6 +3,7 @@ from django import forms
 from .models import CustomUser
 from django.contrib.auth.forms import UserCreationForm
 from .models import CaregiverProfile, ElderlyProfile, Schedule
+from .models import CareSchedule
 
 
 class SignUpForm(UserCreationForm):
@@ -37,3 +38,16 @@ class ScheduleForm(forms.ModelForm):
             'start_time': forms.TimeInput(attrs={'type': 'time'}),
             'end_time': forms.TimeInput(attrs={'type': 'time'}),
         }
+
+      
+
+class CareScheduleForm(forms.ModelForm):
+    class Meta:
+        model = CareSchedule
+        fields = ['elderly', 'date', 'start_time', 'end_time', 'location', 'task_list', 'hourly_rate']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+

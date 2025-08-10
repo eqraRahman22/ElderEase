@@ -5,6 +5,12 @@ from .forms import SignUpForm
 from core.factories.user_factory import UserFactory
 from django.contrib import messages
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .forms import CareScheduleForm
+from .models import CareSchedule, ElderlyProfile, CaregiverAssignment
+from .strategies import AllSchedulesStrategy
+
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -131,3 +137,33 @@ def set_schedule(request):
     # Limit elderly choices to only those of logged in family member
     form.fields['elderly'].queryset = ElderlyProfile.objects.filter(family_member=request.user)
     return render(request, 'core/set_schedule.html', {'form': form})
+
+
+
+# Family Member: Set Schedule
+@login_required
+def set_schedule(request):
+    if request.method == "POST":
+        form = CareScheduleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("family_dashboard")
+    else:
+        form = CareScheduleForm()
+        form.fields["elderly"].queryset = ElderlyProfile.objects.filter(family_member=request.user)
+    return render(request, "core/set_schedule.html", {"form": form})
+
+# Caregiver: View Schedules
+@login_required
+def list_of_people_with_schedules(request):
+    strategy = AllSchedulesStrategy()  # Strategy Pattern in use
+    schedules = strategy.get_schedules()
+    return render(request, "core/list_of_people_with_schedules.html", {"schedules": schedules})
+
+# Caregiver: Confirm caregiving
+@login_required
+def confirm_caregiving(request, schedule_id):
+    schedule = get_object_or_404(CareSchedule, id=schedule_id)
+    CaregiverAssignment.objects.create(schedule=schedule, caregiver=request.user, confirmed=True)
+    return redirect("list_of_people_with_schedules")
+
