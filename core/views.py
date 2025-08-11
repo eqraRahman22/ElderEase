@@ -1,10 +1,9 @@
 # core/views.py
-from django.shortcuts import render, redirect
+
 from django.contrib.auth import authenticate, login, logout
 from .forms import SignUpForm
 from core.factories.user_factory import UserFactory
 from django.contrib import messages
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import CareScheduleForm

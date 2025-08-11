@@ -64,10 +64,10 @@ class CareSchedule(models.Model):
     location = models.CharField(max_length=255)
     task_list = models.TextField(help_text="Comma-separated list of tasks")
     hourly_rate = models.DecimalField(max_digits=6, decimal_places=2)
-    confirmed_by_caregiver = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Schedule for {self.elderly.name} on {self.date}"
+
 
 
 class CaregiverAssignment(models.Model):
