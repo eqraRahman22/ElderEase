@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV 'D:\Univatsity Courses\Summer 2025\CSE327\elderease\env'
+set -gx VIRTUAL_ENV 'D:\NSU Books\8th Semester\CSE327\bhugichugi\ElderEase\env'
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"Scripts $PATH
