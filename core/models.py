@@ -49,3 +49,41 @@ class Schedule(models.Model):
 
     def __str__(self):
         return f"{self.elderly.name} - {self.date}"
+
+# The bellow portion is added by SMH
+class CaregivingLog(models.Model):
+    """
+    Logs caregiving activities performed for an elderly person.
+    Linked to a caregiver and an elderly profile.
+    """
+    caregiver = models.ForeignKey(CaregiverProfile, on_delete=models.CASCADE)
+    elderly = models.ForeignKey(ElderlyProfile, on_delete=models.CASCADE)
+    task = models.CharField(max_length=255)
+    notes = models.TextField(blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.task} for {self.elderly.name} on {self.date.strftime('%Y-%m-%d')}"
+
+
+class CaregiverRequest(models.Model):
+    """
+    Stores a request from a family member to a caregiver for a specific elderly person.
+    Tracks request status and request date.
+    """
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("accepted", "Accepted"),
+        ("declined", "Declined"),
+    ]
+
+    family_member = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="caregiver_requests"
+    )
+    caregiver = models.ForeignKey(CaregiverProfile, on_delete=models.CASCADE)
+    elderly = models.ForeignKey(ElderlyProfile, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    request_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Request by {self.family_member.username} for {self.caregiver.name} ({self.status})"
