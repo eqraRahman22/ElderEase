@@ -1,0 +1,83 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrastyle %}
+<style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 0; }
+    .container { max-width: 900px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+    h1 { color: #333; }
+    .stats { display: flex; gap: 30px; margin-bottom: 30px; }
+    .stat { background: #e9ecef; padding: 20px; border-radius: 6px; flex: 1; text-align: center; }
+    .stat h2 { margin: 0; font-size: 2em; color: #28a745; } /* GREEN */
+    .stat p { margin: 8px 0 0; color: #555; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+    th { background: #f0f0f0; }
+    .badge { font-weight: bold; padding: 4px 10px; border-radius: 4px; }
+    .past { color: #fff; background: #dc3545; }
+    .today { color: #fff; background: #fd7e14; }
+    .upcoming { color: #fff; background: #28a745; } /* GREEN */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Admin Dashboard</h1>
+    <div class="stats">
+        <div class="stat">
+            <h2>{{ user_count }}</h2>
+            <p>Total Users</p>
+        </div>
+        <div class="stat">
+            <h2>{{ caregiver_count }}</h2>
+            <p>Caregivers</p>
+        </div>
+        <div class="stat">
+            <h2>{{ elderly_count }}</h2>
+            <p>Elderly Profiles</p>
+        </div>
+        <div class="stat">
+            <h2>{{ schedule_count }}</h2>
+            <p>Schedules</p>
+        </div>
+    </div>
+
+    <h2>Recent Schedules</h2>
+    <table>
+        <tr>
+            <th>Elderly</th>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Duration (hh:mm)</th>
+            <th>Hourly Rate</th>
+            <th>Estimated Cost</th>
+            <th>Location</th>
+            <th>Status</th>
+        </tr>
+        {% for schedule in recent_schedules %}
+        <tr>
+            <td>{{ schedule.elderly.name }}</td>
+            <td>{{ schedule.date }}</td>
+            <td>{{ schedule.start_time }}</td>
+            <td>{{ schedule.end_time }}</td>
+            <td>{{ schedule.duration }}</td>
+            <td>{{ schedule.hourly_rate }}</td>
+            <td>{{ schedule.estimated_cost }}</td>
+            <td>{{ schedule.location }}</td>
+            <td>
+                {% if schedule.date < today %}
+                    <span class="badge past">Past</span>
+                {% elif schedule.date == today %}
+                    <span class="badge today">Today</span>
+                {% else %}
+                    <span class="badge upcoming">Upcoming</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9">No schedules found.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
