@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="container">
+    <h2 style="color:green;">Available Caregiving Schedules</h2>
+    <table class="table table-bordered">
+        <tr>
+            <th>Elderly Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Location</th>
+            <th>Hourly Rate</th>
+            <th>Tasks</th>
+            <th>Action</th>
+        </tr>
+        {% for schedule in schedules %}
+        <tr>
+            <td>{{ schedule.elderly.name }}</td>
+            <td>{{ schedule.date }}</td>
+            <td>{{ schedule.start_time }} - {{ schedule.end_time }}</td>
+            <td>{{ schedule.location }}</td>
+            <td>${{ schedule.hourly_rate }}</td>
+            <td>{{ schedule.task_list }}</td>
+            <td>
+                <a href="{% url 'confirm_caregiving' schedule.id %}" class="btn btn-success">Confirm</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

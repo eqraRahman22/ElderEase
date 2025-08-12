@@ -2,6 +2,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 
 class CustomUser(AbstractUser):
@@ -49,3 +50,30 @@ class Schedule(models.Model):
 
     def __str__(self):
         return f"{self.elderly.name} - {self.date}"
+    
+   
+
+User = get_user_model()
+
+# Existing models from Day 3...
+class CareSchedule(models.Model):
+    elderly = models.ForeignKey("ElderlyProfile", on_delete=models.CASCADE)
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    location = models.CharField(max_length=255)
+    task_list = models.TextField(help_text="Comma-separated list of tasks")
+    hourly_rate = models.DecimalField(max_digits=6, decimal_places=2)
+
+    def __str__(self):
+        return f"Schedule for {self.elderly.name} on {self.date}"
+
+
+
+class CaregiverAssignment(models.Model):
+    schedule = models.ForeignKey("CareSchedule", on_delete=models.CASCADE)
+    caregiver = models.ForeignKey(User, on_delete=models.CASCADE)
+    confirmed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.caregiver.username} - {self.schedule.elderly.name} - {'Confirmed' if self.confirmed else 'Pending'}"
