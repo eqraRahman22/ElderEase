@@ -13,6 +13,12 @@ from decimal import Decimal
 from .models import CustomUser, CaregiverProfile, ElderlyProfile, Schedule
 
 
+# Customize Django Admin branding
+admin.site.site_header = "Admin Dashboard"
+admin.site.site_title = "Admin Dashboard"
+admin.site.index_title = "Admin Dashboard"
+
+
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -23,19 +29,21 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password', 'role')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active', 'groups', 'user_permissions')}),
+        ('Permissions', {'fields': ('is_staff',
+         'is_active', 'groups', 'user_permissions')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'username', 'role', 'password1', 'password2', 'is_staff', 'is_active')}
-        ),
+         ),
     )
 
 
 @admin.register(CaregiverProfile)
 class CaregiverProfileAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'phone', 'gender', 'dob', 'emergency_contact')
+    list_display = ('name', 'user', 'phone', 'gender',
+                    'dob', 'emergency_contact')
     search_fields = ('name', 'phone', 'user__email')
     list_filter = ('gender',)
 
@@ -95,19 +103,23 @@ class ScheduleAdmin(admin.ModelAdmin):
     def increase_rate_10(self, request, queryset):
         updated = 0
         for sched in queryset:
-            sched.hourly_rate = (sched.hourly_rate * Decimal('1.10')).quantize(Decimal('0.01'))
+            sched.hourly_rate = (sched.hourly_rate *
+                                 Decimal('1.10')).quantize(Decimal('0.01'))
             sched.save(update_fields=['hourly_rate'])
             updated += 1
-        self.message_user(request, f"Updated hourly rate for {updated} schedule(s).")
+        self.message_user(
+            request, f"Updated hourly rate for {updated} schedule(s).")
 
     @admin.action(description="Decrease hourly rate by 10%")
     def decrease_rate_10(self, request, queryset):
         updated = 0
         for sched in queryset:
-            sched.hourly_rate = (sched.hourly_rate * Decimal('0.90')).quantize(Decimal('0.01'))
+            sched.hourly_rate = (sched.hourly_rate *
+                                 Decimal('0.90')).quantize(Decimal('0.01'))
             sched.save(update_fields=['hourly_rate'])
             updated += 1
-        self.message_user(request, f"Updated hourly rate for {updated} schedule(s).")
+        self.message_user(
+            request, f"Updated hourly rate for {updated} schedule(s).")
 
     @admin.action(description="Export payments CSV (with duration & estimated cost)")
     def export_payments_csv(self, request, queryset):
@@ -154,9 +166,11 @@ class ScheduleAdmin(admin.ModelAdmin):
                 f"Thank you."
             )
             try:
-                send_mail(subject, message, getattr(settings, 'DEFAULT_FROM_EMAIL', None), [family.email])
+                send_mail(subject, message, getattr(
+                    settings, 'DEFAULT_FROM_EMAIL', None), [family.email])
             except Exception as e:
-                self.message_user(request, f"Failed to email {family.email}: {e}", level="error")
+                self.message_user(
+                    request, f"Failed to email {family.email}: {e}", level="error")
         self.message_user(request, "Reminder emails processed.")
 
     # ---------- Redirect to admin homepage after adding a Schedule ----------

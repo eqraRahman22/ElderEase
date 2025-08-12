@@ -17,7 +17,6 @@ urlpatterns = [
     path("list_of_people_with_schedules/", views.list_of_people_with_schedules, name="list_of_people_with_schedules"),
     path("confirm_caregiving/<int:schedule_id>/", views.confirm_caregiving, name="confirm_caregiving"),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
-   
-
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
 ]
 
