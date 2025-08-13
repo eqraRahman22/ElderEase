@@ -50,40 +50,70 @@ class Schedule(models.Model):
     def __str__(self):
         return f"{self.elderly.name} - {self.date}"
 
-# The bellow portion is added by SMH
+# ~ The bellow portion is added by SMH
 class CaregivingLog(models.Model):
     """
     Logs caregiving activities performed for an elderly person.
-    Linked to a caregiver and an elderly profile.
+    Supports Feature 1: Monitoring caregiving services & history.
     """
-    caregiver = models.ForeignKey(CaregiverProfile, on_delete=models.CASCADE)
-    elderly = models.ForeignKey(ElderlyProfile, on_delete=models.CASCADE)
-    task = models.CharField(max_length=255)
-    notes = models.TextField(blank=True, null=True)
-    date = models.DateTimeField(auto_now_add=True)
+    caregiver = models.ForeignKey(
+        CaregiverProfile,                     # Link to caregiver profile
+        on_delete=models.CASCADE              # If caregiver is deleted, logs are also deleted
+    )
+    elderly = models.ForeignKey(
+        ElderlyProfile,                       # Link to elderly person
+        on_delete=models.CASCADE              # If elderly is deleted, related logs are deleted
+    )
+    task = models.CharField(
+        max_length=255                        # Short description of the task performed
+    )
+    notes = models.TextField(
+        blank=True,                           # Optional extra details about the task
+        null=True
+    )
+    date = models.DateTimeField(
+        auto_now_add=True                     # Automatically store timestamp when log is created
+    )
 
     def __str__(self):
+        # Shows task name, elderly name, and date in a human-readable format
         return f"{self.task} for {self.elderly.name} on {self.date.strftime('%Y-%m-%d')}"
 
 
 class CaregiverRequest(models.Model):
     """
     Stores a request from a family member to a caregiver for a specific elderly person.
-    Tracks request status and request date.
+    Supports Feature 2: Search & request caregiver.
     """
     STATUS_CHOICES = [
-        ("pending", "Pending"),
-        ("accepted", "Accepted"),
-        ("declined", "Declined"),
+        ("pending", "Pending"),               # Request sent but no response yet
+        ("accepted", "Accepted"),             # Caregiver accepted the request
+        ("declined", "Declined"),             # Caregiver declined the request
     ]
 
     family_member = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="caregiver_requests"
+        settings.AUTH_USER_MODEL,             # Link to the CustomUser who is the family member
+        on_delete=models.CASCADE,             # If family member account is deleted, requests are deleted
+        related_name="caregiver_requests"     # Allows reverse query: family_member.caregiver_requests.all()
     )
-    caregiver = models.ForeignKey(CaregiverProfile, on_delete=models.CASCADE)
-    elderly = models.ForeignKey(ElderlyProfile, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
-    request_date = models.DateTimeField(auto_now_add=True)
+    caregiver = models.ForeignKey(
+        CaregiverProfile,                     # Caregiver being requested
+        on_delete=models.CASCADE
+    )
+    elderly = models.ForeignKey(
+        ElderlyProfile,                       # Elderly person for whom the caregiver is requested
+        on_delete=models.CASCADE
+    )
+    status = models.CharField(
+        max_length=20,                        # Current status of the request
+        choices=STATUS_CHOICES,               # Restrict to predefined statuses
+        default="pending"                     # Default status when created
+    )
+    request_date = models.DateTimeField(
+        auto_now_add=True                     # Automatically stores when the request was made
+    )
 
     def __str__(self):
+        # Shows which family member requested which caregiver & current status
         return f"Request by {self.family_member.username} for {self.caregiver.name} ({self.status})"
+
